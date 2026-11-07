@@ -13,14 +13,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Check repository structure
+      - name: Verify Dockerfile
         run: |
-          echo "Repository structure:"
-          pwd
+          echo "Repository:"
           ls -la
-          echo "Dockerfiles:"
-          find . -name "Dockerfile" -type f
+          echo "Test directory:"
+          ls -la ./test
+          echo "Dockerfile:"
+          test -f ./test/Dockerfile && echo "Dockerfile found" || (echo "Dockerfile NOT found" && exit 1)
 
       - name: Extract Docker image metadata
         id: meta
