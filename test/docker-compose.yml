@@ -1,0 +1,36 @@
+services:
+
+  mysql-service:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: demo
+    ports:
+      - "3307:3306"         
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./springboot/app
+    image: springboot-app
+    depends_on:
+      mysql-service:
+        condition: service_healthy   
+    ports:
+      - "666:8081"
+
+  frontend:
+    build: ./angular-app
+    image: angular-app
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"           
+
+volumes:
+  mysql-data:
