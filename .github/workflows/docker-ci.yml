@@ -1,3 +1,4 @@
+```yaml
 name: Build and push Docker image
 
 on:
@@ -9,9 +10,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Check repository structure
+        run: |
+          echo "Repository structure:"
+          pwd
+          ls -la
+          echo "Dockerfiles:"
+          find . -name "Dockerfile" -type f
 
       - name: Extract Docker image metadata
         id: meta
@@ -32,7 +42,10 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
+          context: ./test
+          file: ./test/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
+```
