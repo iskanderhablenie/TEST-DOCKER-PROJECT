@@ -6,13 +6,13 @@ on:
       - main
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Extract Docker image metadata
         id: meta
         uses: docker/metadata-action@v6
